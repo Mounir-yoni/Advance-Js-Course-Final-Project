@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="../node_modules/axios/dist/axios.js"></script>
+
+
+    <style>
+        body {
+            background-color: #f0ecff; /* Replace with your desired color */
+        }
+        .card{
+          margin-top: 30px;
+        }
+        #add-btn{
+          position: fixed;
+          height: 70px;
+          width: 70px;
+          font-size: 50px;
+          bottom: 5%;
+          right: 7%;
+          color: white;
+          border-radius: 100px;
+          cursor: pointer;
+          text-align: center;
+          box-shadow: 0 8px 8px rgb(0, 0, 0,0.3);
+        }
+        .alert-post{
+          position: fixed;
+          bottom: 5%;
+          left: 2%;
+        }
+        .name-user{
+          margin: 5px 15px 5px 5px;
+          text-transform: capitalize;
+          font-weight: 700;
+          font-size: 18px;
+        }
+        .bi-pen{
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container ">
+        <div class="d-flex justify-content-center">
+                <div class="col-9">
+                  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow rounded pt-3">
+                    <div class="container-fluid">
+                      <a class="navbar-brand" href="#">YoniSoft</a>
+                      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                      </button>
+                      <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                          <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="#">profile</a>
+                          </li>
+                        </ul>
+  
+                        <div class="d-flex justify-content-end" style="width: 100%;" id="login-register-div" >
+                          <img src="" id="user-img" style="height: 40px;width: 40px;display:none;" class="rounded-circle border border-2"  alt="">
+                          <p class="name-user" id="user-name"></p>
+                          <button type="button" id="login-btn" class="btn btn-outline-success mx-2" data-bs-toggle="modal" data-bs-target="#login" data-bs-whatever="@mdo">Login</button>
+                          <button type="button" id="register-btn" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#register" data-bs-whatever="@mdo">Register</button>
+                          <button type="button" id="logout-btn" style="display: none;" class="btn btn-outline-danger" onclick="logout()" data-bs-toggle="modal" data-bs-target="#logout" data-bs-whatever="@mdo">logout</button>
+  
+                      </div>
+                      </div>
+                    </div>
+                  </nav>
+                  <div class="alert alert-success mt-2 mb-0" role="alert" id="login-alert" style="display: none;">
+                    Login success , welcome again
+                  </div>
+                  <div class="alert alert-success mt-2 mb-0" role="alert" id="register-alert" style="display: none;">
+                    register success , welcome 
+                  </div>
+                  <div class="alert alert-danger mt-2 mb-0" role="alert" id="logout-alert" style="display: none;">
+                    Log out successfully
+                  </div>
+                </div>
+  
+        </div>
+  
+    </div>
+  
+
+      <!--========= MODEL =========-->
+
+      <!-- login model -->
+
+      <div class="modal fade" id="login" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="UserName-login" class="col-form-label">User Name</label>
+                  <input type="text" class="form-control" id="UserName-login">
+                </div>
+                <div class="mb-3">
+                  <label for="Password-login" class="col-form-label">Password</label>
+                  <input type="password" class="form-control" id="Password-login">
+                </div>
+              </form>
+            </div>
+            <div class="alert alert-danger mt-2 mb-0" role="alert" id="alert-error-login" style="display: none;">
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary"  onclick="loginclick()">Login</button>
+            </div>
+          </div>
+        </div>
+      </div>
+            <!--// login model //-->
+      
+      
+            <!-- register model -->
+      
+      <div class="modal fade" id="register" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Register</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="name-text" class="col-form-label">Name</label>
+                  <input type="text" class="form-control" id="name-text">
+                </div>
+      
+                <div class="mb-3">
+                  <label for="Username-reg" class="col-form-label">User name</label>
+                  <input type="text" class="form-control" id="Username-reg">
+                </div>
+      
+                <div class="mb-3">
+                  <label for="password-register" class="col-form-label">Password</label>
+                  <input type="password" class="form-control" id="password-register">
+                </div>
+      
+                <div class="mb-3">
+                <label for="password-register" class="col-form-label">picture</label>
+                <input type="file" class="form-control" id="register-image">
+              </div>
+      
+              </form>
+            </div>
+            <div class="alert alert-danger mt-2 mb-0" role="alert" id="alert-error" style="display: none;">
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="registerclick()">Register</button>
+            </div>
+      
+            
+      
+          </div>
+        </div>
+      </div>
+            <!--// register model //-->
+      
+      
+            <!-- post model -->
+      
+      <div class="modal fade" id="post" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Create a new post</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="title-post" class="col-form-label">title</label>
+                  <input type="text" class="form-control" id="title-post">
+                </div>
+      
+                <div class="mb-3">
+                  <textarea name="" id="text-post" style="width: 100%; border-radius: 10px; border-color: #dadada95;"></textarea>
+                </div>
+      
+                <div class="mb-3">
+                  <input type="file" class="form-control" id="image-post">
+                </div>
+      
+              </form>
+            </div>
+            <div class="alert alert-danger mt-2 mb-0" role="alert" id="alert-error" style="display: none;">
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="creatnewpost()">Add post</button>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+      
+            <!-- //post model// -->
+      
+      
+            <!--=========// MODEL //=========-->
+
+        <div class="bg-primary " id="add-btn" data-bs-toggle="modal" data-bs-target="#post" style="display: none;">
+                +
+        </div>
+
+
+
+        <div class="container" style="height: 1000px;">
+
+
+
+            <!--profile card-->
+            <div id="profileplace">
+
+            </div>
+            
+
+
+
+
+
+
+
+
+           <div class="d-flex justify-content-center mt-5">
+            <div class="col-9">
+
+
+
+          <h2 class="col-9 fw-bolder fs-1 text-capitalize">posts</h2>
+              
+
+
+
+
+
+
+
+              <div id="posts-prf">
+
+
+          </div>
+    
+          </div>
+        </div>  
+
+
+
+
+
+
+
+
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+<div class="alert alert-primary mt-2 mb-0 alert-post" role="alert" id="post-create-alert-weting"  style="display:none">
+            Verify post . . .
+</div>
+<div class="alert alert-success mt-2 mb-0 alert-post" role="alert" id="post-create-alert-success" style="display:none">
+            The post was created successfully.
+</div>
+<div class="alert alert-danger mt-2 mb-0 alert-post" role="alert" id="post-create-alert-failed" style="display:none">
+            Failed to create post
+</div>
+<div class="alert alert-danger mt-2 mb-0 alert-post" role="alert" id="post-delete" style="display:none">
+      
+</div>
+
+</body>
+
+<script src="./final-chaleng.js"></script>  
+<script>
+  const urlparm = new URLSearchParams(window.location.search);
+  const id= urlparm.get("userId");
+  console.log('id is '+id);
+
+  verifylogin();
+  getuser();
+  getpostuser();
+
+
+
+  function getuser(){
+
+    axios
+    .get(`https://tarmeezacademy.com/api/v1/users/${id}`)
+    .then(function (user) {
+      // handle success
+      const profilplice = document.getElementById("profileplace");
+      console.log(user.data.data);
+      let emailuser= 'none';
+      if(user.data.data.email!=null){
+         emailuser = user.data.data.email;
+      }
+      profilplice.innerHTML=`<div class="d-flex justify-content-center mt-4">
+                <div class="card mb-3 col-9 shadow" style="height: 200px;">
+                    <div class="row g-0 ">
+                      <div class="col-md-3 d-flex align-items-center justify-content-center " >
+                          <img src="${user.data.data.profile_image}" style="width: 130x;height:130px;" class="img-fluid  rounded-circle" alt="...">
+                      </div>
+                      <div class="col-md-4">
+                          <div class="card-body d-flex flex-column ">
+                          <h5 class="card-title mt-4">${emailuser}</h5>
+                          <h5 class="card-title mt-3">${user.data.data.username}</h5>
+                          <h5 class="card-title mt-3">${user.data.data.name}</h5>
+                          </div>
+
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card-body d-flex flex-column ">
+                                <div class="mt-3">
+                                    <h1 class="fw-normal" style="display: inline-block;">${user.data.data.posts_count}</h2>
+                                    <p class="fw-lighter" style="display: inline-block;color:#959595;">posts</p>
+                                </div>
+                                <div class="mt-3">
+                                    <h1 class="fw-normal" style="display: inline-block;">${user.data.data.comments_count}</h2>
+                                    <p class="fw-lighter" style="display: inline-block;color:#959595;">comments</p>
+                                </div>                        </div>
+                      </div>
+                    </div>
+
+                </div>
+           </div>`
+    
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error)
+    });
+  }
+
+  function getpostuser(){
+
+
+    axios
+    .get(`https://tarmeezacademy.com/api/v1/users/${id}/posts`)
+    .then(function (posts) {
+      // handle success
+      for (post of posts.data.data) {
+        console.log(post);
+        postsofuser(post);
+      }
+    })
+    .catch(function (error) {
+      // handle error
+    });
+  
+    }  
+
+    function postsofuser(post) {
+      console.log(post.id);
+
+      const bodypost = document.getElementById("posts-prf");
+        
+        bodypost.innerHTML += `
+        <div class="card shadow "  >
+                  <div class="card-header d-flex justify-content-between">
+                    <div>
+                    <img src="${post.author.profile_image}" alt="" style="height: 40px;width: 40px;" class="rounded-circle border border-2">
+                    <b class="ml-1">@${post.author.name}</b>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" onclick="getidofpost(${post.id})" class="btn  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" >
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen mt-2" viewBox="0 0 16 16">
+                                      <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                                    </svg>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                          <li><a class="dropdown-item" href="#" onclick="deletepost()">Delete post</a></li>
+                        </ul>
+                    </div>
+    
+                  </div>
+                  <div class="card-body" onclick="postclick(${post.id})" style="cursor: pointer;">
+                    <img src="${post.image}" class="w-100" alt="">
+    
+                    <h6 style="color: #a7a7a7;" class="mt-1">
+                      ${post.created_at}
+                    </h6>
+                    <h5>
+                    ${post.title}
+                    </h5>
+                    <p>
+                    ${post.body}
+                    </p>
+                    <hr>
+                    <div>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                      </svg>         
+                      <span>(${post.comments_count}) Comments</span>
+                    </div>
+                  </div>
+        </div>`;
+    }
+  
+
+
+</script>
